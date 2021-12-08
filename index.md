@@ -1,3 +1,5 @@
+# Gamepad Vibration Button Mapper
+
 ## Foreword
 
 I came up with this project when I bought a new gamepad for PC games, only to realize many games do not have full gamepad support. Steam fortuneatly has a feature that allows you to remap keyboard and mouse controls onto gamepads, but their haptics feature only supports gamepads with linear actuators (ie steam controller and Nintendo Switch gamepad). But most standard gamepads, such as the ubiquitous Xbox gamepad, uses spinning motors with weights to produce rumble. To remedy this, I wrote this program in order to get vibration feedback on button presses. While not as ideal has having full controller support from the games, even having simple vibrations can make a game more enjoyable.
