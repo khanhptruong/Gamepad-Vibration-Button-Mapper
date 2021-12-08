@@ -1,37 +1,33 @@
-## Welcome to GitHub Pages
+## Foreword
 
-You can use the [editor on GitHub](https://github.com/khanhptruong/Gamepad-Vibration-Button-Mapper/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+I came up with this project when I bought a new gamepad for PC games, only to realize many games do not have full gamepad support. Steam fortuneatly has a feature that allows you to remap keyboard and mouse controls onto gamepads, but their haptics feature only supports gamepads with linear actuators (ie steam controller and Nintendo Switch gamepad). But most standard gamepads, such as the ubiquitous Xbox gamepad, uses spinning motors with weights to produce rumble. To remedy this, I wrote this program in order to get vibration feedback on button presses. While not as ideal has having full controller support from the games, even having simple vibrations can make a game more enjoyable.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Description
 
-### Markdown
+This program maps vibrations to gamepad button inputs. Vibrations come in two varieties, continuous vibrations that continue to vibrate when a button is held, and once-off vibrations that vibrates briefly when buttons are pressed. This program only supports controllers using XINPUT.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## Design Notes
 
-```markdown
-Syntax highlighted code block
+- The program only outputs a single vibration type at a time. If multiple inputs are given, the program will priortize continuous vibrations with the greatest vibration speed. If no continuous vibrations are active, once-off vibrations with greatest vibrations speeds are prioritized.
+- The program runs at a rate of 60 ticks-per-seconds. This slower rate is neccessary to properly detect positive-edge inputs, otherwise inputs will be dropped. 60 ticks-per-second is used because 60frames-per-second is standard in many video games, but other tick rates suck as 120tps or 30tps will work just as well.
+- This program with built in VisualStudio2013 as a win32 console application. VisualStudio files have been omitted for convenience so the code can be easily adapted for use an other IDEs.
 
-# Header 1
-## Header 2
-### Header 3
+## Requiredments
 
-- Bulleted
-- List
+- Windows 10 (Windows 11 probably works, but has not been tested)
+- Xinput9_1_0.lib library (included with most Windows installations)
 
-1. Numbered
-2. List
+## Future Improvements
 
-**Bold** and _Italic_ and `Code` text
+- add support for multiple controllers
+- organize arrays better (tuples? vectors?)
+- add profiles supports, saving and loading different profiles for different games
+- create a UI rather than console application
+- give each button input individual pulse lengths
+- rename variables to be easier to understand
+  - name vibration pulses in terms of frequencey
 
-[Link](url) and ![Image](src)
-```
+## Special Thanks
 
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/khanhptruong/Gamepad-Vibration-Button-Mapper/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+- [Katy's Code XINPUT Tutorial](https://katyscode.wordpress.com/2013/08/30/xinput-tutorial-part-1-adding-gamepad-support-to-your-windows-game/)
+- [Lawrence McCauley Gamepad XINPUT Tutorial](https://lcmccauley.wordpress.com/2014/01/05/gamepad-input-tutorial/)
