@@ -4,8 +4,7 @@ github id: khanhptruong
 Gamepad Vibration Button Mapper
 2021 Dec 7
 
-For more detailed info, visit github page: [COMING SOONG]
-
+For more detailed info, visit github page: https://khanhptruong.github.io/Gamepad-Vibration-Button-Mapper/
 -----------
 Description
 -----------
