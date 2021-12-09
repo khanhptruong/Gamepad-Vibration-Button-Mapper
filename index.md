@@ -14,7 +14,7 @@ This program maps vibrations to gamepad button inputs. Vibrations come in two va
 - The program runs at a rate of 60 ticks-per-seconds. This slower rate is neccessary to properly detect positive-edge inputs, otherwise inputs will be dropped. 60 ticks-per-second is used because 60frames-per-second is standard in many video games, but other tick rates suck as 120tps or 30tps will work just as well.
 - This program with built in VisualStudio2013 as a win32 console application. VisualStudio files have been omitted for convenience so the code can be easily adapted for use an other IDEs.
 
-## Requiredments
+## Requirements
 
 - Windows 10 (Windows 11 probably works, but has not been tested)
 - Xinput9_1_0.lib library (included with most Windows installations)
