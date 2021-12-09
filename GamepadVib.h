@@ -16,7 +16,8 @@ public:
 	bool  getBtnPosEdge(int index);
 	bool  getBtnMap(int index);
 	int   getNumPulses(int index);
-	int   getPulseFreq(int index);
+	float getPulseFreq(int index);
+	float getPulseOffFreq(int index);
 	float getLeftSpd(int index);
 	float getRightSpd(int index);
 
@@ -29,7 +30,8 @@ private:
 	bool  _exitButtonMap[_numTotalButtons];
 	bool  _btnMap[_numTotalButtons];
 	int   _numPulses[_numTotalButtons]; 
-	int   _pulseFreq[_numTotalButtons]; //0 means pulse continuously
+	float _pulseFreq[_numTotalButtons]; //0 means pulse continuously
+	float _pulseOffFreq[_numTotalButtons];
 	float _leftSpeed[_numTotalButtons];
 	float _rightSpeed[_numTotalButtons];
 

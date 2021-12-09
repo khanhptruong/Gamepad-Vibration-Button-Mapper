@@ -2,15 +2,15 @@
 
 TickCounter::TickCounter(){
 	_tickLength = 16666; //16666 microseconds = 60Hz
-	_tickFreq = 60;
+	_tickFreq = 60.0f;
 	_start = std::chrono::high_resolution_clock::now();
 }
 
-TickCounter::TickCounter(int tickFreq){
+TickCounter::TickCounter(float tickFreq){
 	if (tickFreq > 0){
 		_tickFreq = tickFreq;
 	}else{
-		_tickFreq = 60;
+		_tickFreq = 60.0f;
 	}
 	_tickLength = 1E6 / _tickFreq;
 	_start = std::chrono::high_resolution_clock::now();
@@ -32,12 +32,12 @@ void TickCounter::resetTick(){
 	_start = std::chrono::high_resolution_clock::now();
 }
 
-void TickCounter::setFreq(int tickFreq){
+void TickCounter::setFreq(float tickFreq){
 	if (tickFreq > 0){
 		_tickFreq = tickFreq;
 	}
 	else{
-		_tickFreq = 60;
+		_tickFreq = 60.0f;
 	}
 	_tickLength = 1E6 / _tickFreq;
 	_start = std::chrono::high_resolution_clock::now();

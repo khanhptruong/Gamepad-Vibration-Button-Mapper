@@ -7,14 +7,14 @@ class TickCounter
 {
 public:
 	TickCounter();
-	TickCounter(int tickFreq);
+	TickCounter(float tickFreq);
 
 	bool isTick();
 	void resetTick();
-	void setFreq(int tickFreq);
+	void setFreq(float tickFreq);
 private:
-	int _tickLength; //microseconds
-	int _tickFreq;   //Hz
+	long int _tickLength; //microseconds
+	float _tickFreq;   //Hz
 	std::chrono::time_point<std::chrono::high_resolution_clock> _start, _end;
 };
 

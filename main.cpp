@@ -15,11 +15,13 @@ int main(){
 
 	bool pulseActive[numButtons];
 	TickCounter pulseTimer[numButtons];
+	TickCounter pulseOffTimer[numButtons];
 	int pulseCount[numButtons];
 
 	for (int i = 0; i < numButtons; i++){ 
 		pulseActive[i] = false;
 		pulseTimer[i].setFreq(0);
+		pulseOffTimer[i].setFreq(0);
 		pulseCount[i] = 0; 
 	}
 	
@@ -51,18 +53,19 @@ int main(){
 						adjoinSpd(rSpd, gamepad.getRightSpd(i));
 						pulseActive[i] = true;
 						pulseTimer[i].setFreq(gamepad.getPulseFreq(i));
+						pulseOffTimer[i].setFreq(gamepad.getPulseOffFreq(i));
 						pulseCount[i] = gamepad.getNumPulses(i);
 					}else if (pulseActive[i] == true && pulseCount[i] > 0){ //on active pulse...
 						if (pulseTimer[i].isTick() == true){ //if tick, deactivate
 							pulseActive[i] = false;
-							pulseTimer[i].resetTick();
+							pulseOffTimer[i].resetTick();
 							if (pulseCount[i] < 1000){ pulseCount[i]--; }
 						}else if (pulseTimer[i].isTick() == false){ //if not tick, maintain adjoin vibration
 							adjoinSpd(lSpd, gamepad.getLeftSpd(i));
 							adjoinSpd(rSpd, gamepad.getRightSpd(i));
 						}
 					}else if (pulseActive[i] == false && pulseCount[i] > 0) { //on deactive pulse...
-						if (pulseTimer[i].isTick() == true){ //if tick, activate pulse and adjoin vibration ELSE if not tick, adjoin nothing
+						if (pulseOffTimer[i].isTick() == true){ //if tick, activate pulse and adjoin vibration ELSE if not tick, adjoin nothing
 							adjoinSpd(lSpd, gamepad.getLeftSpd(i));
 							adjoinSpd(rSpd, gamepad.getRightSpd(i));
 							pulseActive[i] = true;
@@ -73,7 +76,6 @@ int main(){
 					if (pulseActive[i] == true && pulseCount[i] > 0){ //on active pulse...
 						if (pulseTimer[i].isTick() == true){ //if tick, deactivate
 							pulseActive[i] = false;
-							pulseTimer[i].resetTick();
 							pulseCount[i] = 0;
 						}else if (pulseTimer[i].isTick() == false){ //if not tick, maintain adjoin vibration
 							adjoinSpd(lSpd, gamepad.getLeftSpd(i));

@@ -14,13 +14,14 @@ bool GamepadVib::isExit(){
 	return _isMatching(_exitButtonMap, _buttonsPressed, _numTotalButtons) == true;
 }
 
-bool  GamepadVib::getBtnPressed(int index){ return _buttonsPressed[index]; }
-bool  GamepadVib::getBtnPosEdge(int index){ return _buttonsPosEdge[index]; }
-bool  GamepadVib::getBtnMap(int index)    { return _btnMap[index]; }
-int   GamepadVib::getNumPulses(int index) { return _numPulses[index]; }
-int   GamepadVib::getPulseFreq(int index) { return _pulseFreq[index]; }
-float GamepadVib::getLeftSpd(int index)   { return _leftSpeed[index]; }
-float GamepadVib::getRightSpd(int index)  { return _rightSpeed[index]; }
+bool  GamepadVib::getBtnPressed(int index)   { return _buttonsPressed[index]; }
+bool  GamepadVib::getBtnPosEdge(int index)   { return _buttonsPosEdge[index]; }
+bool  GamepadVib::getBtnMap(int index)       { return _btnMap[index]; }
+int   GamepadVib::getNumPulses(int index)    { return _numPulses[index]; }
+float GamepadVib::getPulseFreq(int index)    { return _pulseFreq[index]; }
+float GamepadVib::getPulseOffFreq(int index) { return _pulseOffFreq[index]; }
+float GamepadVib::getLeftSpd(int index)      { return _leftSpeed[index]; }
+float GamepadVib::getRightSpd(int index)     { return _rightSpeed[index]; }
 
 void GamepadVib::_setDefault(){
 	_btnMap[0]  = true; //A
@@ -60,8 +61,8 @@ void GamepadVib::_setDefault(){
 
 	_leftSpeed[0]  = 0.0f; //A
 	_leftSpeed[1]  = 1.0f; //B
-	_leftSpeed[2]  = 1.0f; //X
-	_leftSpeed[3]  = 0.3f; //Y
+	_leftSpeed[2]  = 0.0f; //X
+	_leftSpeed[3]  = 0.0f; //Y
 	_leftSpeed[4]  = 0.0f; //DPAD UP
 	_leftSpeed[5]  = 0.0f; //DPAD DOWN
 	_leftSpeed[6]  = 0.0f; //DPAD LEFT
@@ -78,7 +79,7 @@ void GamepadVib::_setDefault(){
 	_rightSpeed[0]  = 1.0f; //A
 	_rightSpeed[1]  = 1.0f; //B
 	_rightSpeed[2]  = 1.0f; //X
-	_rightSpeed[3]  = 0.0f; //Y
+	_rightSpeed[3]  = 1.0f; //Y
 	_rightSpeed[4]  = 0.0f; //DPAD UP
 	_rightSpeed[5]  = 0.0f; //DPAD DOWN
 	_rightSpeed[6]  = 0.0f; //DPAD LEFT
@@ -93,22 +94,39 @@ void GamepadVib::_setDefault(){
 	_rightSpeed[15] = 0.75f;  //R TRIGGER
 
 	//0 = continuous
-	_pulseFreq[0]  = 6; //A
-	_pulseFreq[1]  = 4; //B
-	_pulseFreq[2]  = 1; //X
-	_pulseFreq[3]  = 2; //Y
-	_pulseFreq[4]  = 0; //DPAD UP
-	_pulseFreq[5]  = 0; //DPAD DOWN
-	_pulseFreq[6]  = 0; //DPAD LEFT
-	_pulseFreq[7]  = 0; //DPAD RIGHT
-	_pulseFreq[8]  = 0; //L SHOULDER
-	_pulseFreq[9]  = 0; //R SHOULDER
-	_pulseFreq[10] = 6; //L THUMB
-	_pulseFreq[11] = 0; //R THUMB
-	_pulseFreq[12] = 0; //START
-	_pulseFreq[13] = 0; //BACK
-	_pulseFreq[14] = 6; //L TRIGGER
-	_pulseFreq[15] = 0;  //R TRIGGER
+	_pulseFreq[0]  = 6.0f; //A
+	_pulseFreq[1]  = 4.0f; //B
+	_pulseFreq[2]  = 1.0f; //X
+	_pulseFreq[3]  = 6.0f; //Y
+	_pulseFreq[4]  = 0.0f; //DPAD UP
+	_pulseFreq[5]  = 0.0f; //DPAD DOWN
+	_pulseFreq[6]  = 0.0f; //DPAD LEFT
+	_pulseFreq[7]  = 0.0f; //DPAD RIGHT
+	_pulseFreq[8]  = 0.0f; //L SHOULDER
+	_pulseFreq[9]  = 0.0f; //R SHOULDER
+	_pulseFreq[10] = 6.0f; //L THUMB
+	_pulseFreq[11] = 0.0f; //R THUMB
+	_pulseFreq[12] = 0.0f; //START
+	_pulseFreq[13] = 0.0f; //BACK
+	_pulseFreq[14] = 6.0f; //L TRIGGER
+	_pulseFreq[15] = 0.0f;  //R TRIGGER
+
+	_pulseOffFreq[0]  = 6.0f; //A
+	_pulseOffFreq[1]  = 4.0f; //B
+	_pulseOffFreq[2]  = 6.0f; //X
+	_pulseOffFreq[3]  = 1.0f; //Y
+	_pulseOffFreq[4]  = 0.0f; //DPAD UP
+	_pulseOffFreq[5]  = 0.0f; //DPAD DOWN
+	_pulseOffFreq[6]  = 0.0f; //DPAD LEFT
+	_pulseOffFreq[7]  = 0.0f; //DPAD RIGHT
+	_pulseOffFreq[8]  = 0.0f; //L SHOULDER
+	_pulseOffFreq[9]  = 0.0f; //R SHOULDER
+	_pulseOffFreq[10] = 6.0f; //L THUMB
+	_pulseOffFreq[11] = 0.0f; //R THUMB
+	_pulseOffFreq[12] = 0.0f; //START
+	_pulseOffFreq[13] = 0.0f; //BACK
+	_pulseOffFreq[14] = 6.0f; //L TRIGGER
+	_pulseOffFreq[15] = 0.0f;  //R TRIGGER
 
 	_exitButtonMap[0]  = false; //A
 	_exitButtonMap[1]  = false; //B
