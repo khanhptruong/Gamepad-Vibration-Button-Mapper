@@ -30,8 +30,7 @@ bool isAnyInputMatching(bool btnCombo[], bool btnsPressed[]);
 int maxSpeed(bool btnComb[], bool btnsPressed[], float leftSpd[], float rightSpd[]);
 
 int main(){
-	const int fps = 16666; //microseconds
-	const int pulseContRate = 0;
+	const int updateFreq = 60; //Hz
 	const int gamepadIndex = 0; //which controller
 
 	bool buttonsPressed[16];
@@ -72,6 +71,60 @@ int main(){
 		true, //L TRIGGER
 		false  //R TRIGGER
 	};
+	float vibLeftSpeed[] = {
+		0.0f, //A
+		0.0f, //B
+		0.0f, //X
+		0.0f, //Y
+		0.0f, //DPAD UP
+		0.0f, //DPAD DOWN
+		0.0f, //DPAD LEFT
+		0.0f, //DPAD RIGHT
+		0.0f, //L SHOULDER
+		0.0f, //R SHOULDER
+		0.0f, //L THUMB
+		0.0f, //R THUMB
+		0.0f, //START
+		0.0f, //BACK
+		0.0f, //L TRIGGER
+		0.75f  //R TRIGGER
+	};
+	float vibRightSpeed[] = {
+		1.0f, //A
+		0.0f, //B
+		0.0f, //X
+		0.0f, //Y
+		0.0f, //DPAD UP
+		0.0f, //DPAD DOWN
+		0.0f, //DPAD LEFT
+		0.0f, //DPAD RIGHT
+		0.0f, //L SHOULDER
+		0.0f, //R SHOULDER
+		1.0f, //L THUMB
+		0.0f, //R THUMB
+		0.0f, //START
+		0.0f, //BACK
+		1.0f, //L TRIGGER
+		0.75f  //R TRIGGER
+	};
+	int vibFreq[] = { //0 = continuous
+		6, //A
+		0, //B
+		0, //X
+		0, //Y
+		0, //DPAD UP
+		0, //DPAD DOWN
+		0, //DPAD LEFT
+		0, //DPAD RIGHT
+		0, //L SHOULDER
+		0, //R SHOULDER
+		6, //L THUMB
+		0, //R THUMB
+		0, //START
+		0, //BACK
+		6, //L TRIGGER
+		0  //R TRIGGER
+	};
 	bool exitButtonCombo[] = {
 		false, //A
 		false, //B
@@ -90,49 +143,10 @@ int main(){
 		false, //L TRIGGER
 		false  //R TRIGGER
 	};
-	float vibLeftSpeed[] = {
-		0.0f, //A
-		0.0f, //B
-		0.0f, //X
-		0.0f, //Y
-		0.0f, //DPAD UP
-		0.0f, //DPAD DOWN
-		0.0f, //DPAD LEFT
-		0.0f, //DPAD RIGHT
-		0.0f, //L SHOULDER
-		0.0f, //R SHOULDER
-		0.0f, //L THUMB
-		0.0f, //R THUMB
-		0.0f, //START
-		0.0f, //BACK
-		1.0f, //L TRIGGER
-		0.7f  //R TRIGGER
-	};
-	float vibRightSpeed[] = {
-		1.0f, //A
-		0.0f, //B
-		0.0f, //X
-		0.0f, //Y
-		0.0f, //DPAD UP
-		0.0f, //DPAD DOWN
-		0.0f, //DPAD LEFT
-		0.0f, //DPAD RIGHT
-		0.0f, //L SHOULDER
-		0.0f, //R SHOULDER
-		1.0f, //L THUMB
-		0.0f, //R THUMB
-		0.0f, //START
-		0.0f, //BACK
-		1.0f, //L TRIGGER
-		0.7f  //R TRIGGER
-	};
-
 	Gamepad gamepad(gamepadIndex);
-	TickCounter tickCounter(fps);
-	TickCounter pulseLength(166666); //microseconds
-	TickCounter pulseContinuous(pulseContRate);
+	TickCounter tickCounter(updateFreq);
+	TickCounter vibFreqCounter;
 	bool pulseContState = false;
-	bool lastInputPosEdge = false; //was the last input pos edge?
 	int vibIndex = 0;
 	
 	cout << "-------------------------------------" << endl;
@@ -162,22 +176,22 @@ int main(){
 				vibIndex = maxSpeed(vibeCont, buttonsPressed, vibLeftSpeed, vibRightSpeed);
 				if (isAnyInputMatching(vibeCont, buttonsPosEdge) == true){
 					gamepad.vibrate(vibLeftSpeed[vibIndex], vibRightSpeed[vibIndex]);
-					pulseContinuous.resetTick();
+					vibFreqCounter.setFreq(vibFreq[vibIndex]);
 					pulseContState = true;
-				}else if (pulseContinuous.isTick() == true && pulseContRate > 0){
+				}else if (vibFreqCounter.isTick() == true && vibFreq[vibIndex] > 0){
 					if (pulseContState == true){
-						gamepad.vibrate(vibLeftSpeed[vibIndex], vibRightSpeed[vibIndex]);
+						gamepad.vibrate(0.0f, 0.0f);
 						pulseContState = false;
 					}else{
-						gamepad.vibrate(0.0f, 0.0f);
+						gamepad.vibrate(vibLeftSpeed[vibIndex], vibRightSpeed[vibIndex]);
 						pulseContState = true;
 					}
 				}
 			}else if (isAnyInputMatching(vibeOnce, buttonsPosEdge) == true){
 				vibIndex = maxSpeed(vibeOnce, buttonsPosEdge, vibLeftSpeed, vibRightSpeed);
 				gamepad.vibrate(vibLeftSpeed[vibIndex], vibRightSpeed[vibIndex]);
-				pulseLength.resetTick();
-			}else if (pulseLength.isTick() == true){
+				vibFreqCounter.setFreq(vibFreq[vibIndex]);
+			}else if (vibFreqCounter.isTick() == true){
 				gamepad.vibrate(0.0f, 0.0f);
 			}
 		}
