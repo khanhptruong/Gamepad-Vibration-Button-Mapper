@@ -6,11 +6,13 @@ I came up with this project when I bought a new gamepad for PC games, only to re
 
 ## Description
 
-This program maps vibrations to gamepad button inputs. Vibrations come in two varieties, continuous vibrations that continue to vibrate when a button is held, and once-off vibrations that vibrates briefly when buttons are pressed. This program only supports controllers using XINPUT.
+This program maps vibrations to gamepad button inputs. Vibrations can be continuous or pulsing, with control over frequency of pulses and number of pulses. This program only supports controllers using XINPUT.
 
 ## Design Notes
 
-- The program only outputs a single vibration type at a time. If multiple inputs are given, the program will priortize continuous vibrations with the greatest vibration speed. If no continuous vibrations are active, once-off vibrations with greatest vibrations speeds are prioritized.
+- This program "adjoins" overlapping vibrations together. For example, if the "A" button pulses the right motor, and the "B" button continuously vibrates the left motor, pressing both with simultaneously activate both motors.
+  - If multiple buttons are attempting to activate the same motor, the faster/stronger vibration takes priority.
+  - If one button is attempting to pulse and another is attempting to continuously vibrate the same motor, the continuous vibration takes priority.
 - The program runs at a rate of 60 ticks-per-seconds. This slower rate is neccessary to properly detect positive-edge inputs, otherwise inputs will be dropped. 60 ticks-per-second is used because 60frames-per-second is standard in many video games, but other tick rates suck as 120tps or 30tps will work just as well.
 - This program with built in VisualStudio2013 as a win32 console application. VisualStudio files have been omitted for convenience so the code can be easily adapted for use an other IDEs.
 
@@ -28,7 +30,9 @@ This program maps vibrations to gamepad button inputs. Vibrations come in two va
 - ~~give each button input individual pulse lengths~~
 - ~~rename variables to be easier to understand~~
   - ~~name vibration pulses in terms of frequencey~~
-- reformat GamepadVib class to be more generic and more intuitive to use
+- ~~reformat GamepadVib class to be more generic and more intuitive to use~~
+- "frequency" of pulses is actually represent 1/2 of a period, with the value being used for both the on and off halves of the period
+  - add more control over the length of the on and off halves of the pulse period 
 
 ## Special Thanks
 
