@@ -22,12 +22,13 @@ This program maps vibrations to gamepad button inputs. Vibrations come in two va
 ## Future Improvements
 
 - add support for multiple controllers
-- organize arrays better (tuples? vectors?)
-- add profiles supports, saving and loading different profiles for different games
+- ~~organize arrays better (tuples? vectors?)~~
+- add profiles support, saving and loading different profiles for different games
 - create a UI rather than console application
-- give each button input individual pulse lengths
-- rename variables to be easier to understand
-  - name vibration pulses in terms of frequencey
+- ~~give each button input individual pulse lengths~~
+- ~~rename variables to be easier to understand~~
+  - ~~name vibration pulses in terms of frequencey~~
+- reformat GamepadVib class to be more generic and more intuitive to use
 
 ## Special Thanks
 
