@@ -8,7 +8,7 @@ For more detailed info, visit github page: https://khanhptruong.github.io/Gamepa
 -----------
 Description
 -----------
-This program maps controller vibrations to gamepad buttons. Vibrations can pulse once when a button is pressed, or vibrate continuously when button is held.
+This program maps controller vibrations to gamepad buttons.
 
 --------------
 Included Files
