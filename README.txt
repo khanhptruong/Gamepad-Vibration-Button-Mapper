@@ -2,9 +2,9 @@ Khanh Truong
 github id: khanhptruong
 
 Gamepad Vibration Button Mapper
-2021 Dec 7
 
 For more detailed info, visit github page: https://khanhptruong.github.io/Gamepad-Vibration-Button-Mapper/
+
 -----------
 Description
 -----------
@@ -17,6 +17,8 @@ Gamepad.h               -class for interfacing XINPUT gamepads
 Gamepad.cpp
 TickCounter.h   	-class for controlling tick rates and timing things
 TickCounter.cpp
+GamepadVib.h		-class for handling vibration maps, subclass of Gamepad
+GamepadVib.cpp
 main.cpp		-main code
 README.txt		-this file
 

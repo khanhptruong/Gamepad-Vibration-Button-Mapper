@@ -1,9 +1,6 @@
 #ifndef TICKCOUNTER_H
 #define TICKCOUNTER_H
 
-//#include <Windows.h>
-//#include <iomanip>
-//#include <cstdlib>
 #include <chrono>
 
 class TickCounter
@@ -21,4 +18,4 @@ private:
 	std::chrono::time_point<std::chrono::high_resolution_clock> _start, _end;
 };
 
-#endif // GAMEPAD_H
+#endif // TICKCOUNTER_H
