@@ -32,7 +32,7 @@ This program maps vibrations to gamepad button inputs. Vibrations can be continu
   - ~~name vibration pulses in terms of frequencey~~
 - ~~reformat GamepadVib class to be more generic and more intuitive to use~~
 - ~~"frequency" of pulses is actually represent 1/2 of a period, with the value being used for both the on and off halves of the period~~
-  - ~~add more control over the length of the on and off halves of the pulse period ~~
+  - ~~add more control over the length of the on and off halves of the pulse period~~
 
 ## Special Thanks
 
