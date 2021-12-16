@@ -20,6 +20,7 @@ void adjoinSpd(float &spd, float spdToAdjoin);
 void printProfile(GamepadVib gpad, int numBtns, int cWidth);
 void readProfile(fstream &file, GamepadVib &gpad, int numBtns);
 void writeProfile(fstream &file, GamepadVib gpad, int numBtns, int cWidth);
+void endProgram(fstream &file, vector <string> &vectList);
 
 int main(){
 	const int updateFreq = 60; //Hz
@@ -45,14 +46,16 @@ int main(){
 	vector <string> profilesList;
 
 	if (gamepad.isConnected() == true){
-		cout << "gamepad connected" << endl;
+		cout << "gamepad connected" << '\n';
 	}
 	else{
-		cout << "gamepad disconnected" << endl;
+		cout << "gamepad disconnected" << '\n';
+		endProgram(profilesData, profilesList);
 		return EXIT_FAILURE;
 	}
 	if (!profilesData){
-		cout << "error opening file";
+		cout << "error opening file" << '\n';
+		endProgram(profilesData, profilesList);
 		return EXIT_FAILURE;
 	}
 	for (int i = 0; i < numButtons; i++){
@@ -62,9 +65,9 @@ int main(){
 		pulseCount[i] = 0;
 	}
 	
-	cout << "-------------------------------------" << endl;
-	cout << "|     GAMEPAD VIBRATION PROGRAM     |" << endl;
-	cout << "-------------------------------------" << endl;
+	cout << "-------------------------------------" << '\n';
+	cout << "|     GAMEPAD VIBRATION PROGRAM     |" << '\n';
+	cout << "-------------------------------------" << '\n';
 
 	//************************
 	//reading/writing profiles
@@ -79,10 +82,10 @@ int main(){
 		readProfile(profilesData, gamepad, numButtons);
 		profilesList.push_back(gamepad.getProfileName());
 	}
-	cout << "+++++++++++++++" << endl;
-	cout << "Profiles List: " << endl;
+	cout << "+++++++++++++++" << '\n';
+	cout << "Profiles List: " << '\n';
 	for (int i = 0; i < profilesList.size(); i++){
-		cout << i << ". " << profilesList[i] << endl;
+		cout << i << ". " << profilesList[i] << '\n';
 	}
 
 	int selection;
@@ -96,17 +99,20 @@ int main(){
 		readProfile(profilesData, gamepad, numButtons);
 		if (gamepad.getProfileName() == profilesList[selection]){ break; }
 	}
-	cout << "profile loaded" << endl;
+	cout << "profile loaded" << '\n';
 	printProfile(gamepad, numButtons, colWidth);
 
 	//***************
 	//vibration loop
+	//set number of pulses to 0 for continuous vibrations
+	//set pulseFreq > 0 for min pulse time of continuous vibs
+	//set pulseNum >=1000 for infinite pulses
 	//***************
 	while (1){
 		if (tickCounter.isTick() == true){
 			gamepad.update();
 			if (gamepad.isExit() == true){ 
-				cout << "gamepad disconnected" << endl;
+				cout << "gamepad disconnected" << '\n';
 				break; 
 			}
 			lSpd = 0.0f;
@@ -114,9 +120,12 @@ int main(){
 			
 			for (int i = 0; i < numButtons; i++){
 				if (gamepad.getBtnMap(i) == true && gamepad.getBtnPressed(i) == true){ //when button is held...
-					if (gamepad.getPulseFreq(i) == 0){ //adjoin continuous vibrations
+					if (gamepad.getNumPulses(i) == 0){ //adjoin continuous vibrations
 						adjoinSpd(lSpd, gamepad.getLeftSpd(i));
 						adjoinSpd(rSpd, gamepad.getRightSpd(i));
+						pulseActive[i] = true; 
+						pulseTimer[i].setFreq(gamepad.getPulseFreq(i));
+						pulseCount[i] = gamepad.getNumPulses(i);
 					}else if (gamepad.getBtnPosEdge(i) == true){ //initialize and adjoin new pulsing vibrations
 						adjoinSpd(lSpd, gamepad.getLeftSpd(i));
 						adjoinSpd(rSpd, gamepad.getRightSpd(i));
@@ -152,6 +161,13 @@ int main(){
 						}
 					}else if (pulseActive[i] == false && pulseCount[i] > 0) { //on deactive pulse...
 						pulseCount[i] = 0;
+					}else if (pulseActive[i] == true && pulseCount[i] == 0){ //set min pulse for continuous vib
+						if (pulseTimer[i].isTick() == false){ //keep vibing until time is up
+							adjoinSpd(lSpd, gamepad.getLeftSpd(i));
+							adjoinSpd(rSpd, gamepad.getRightSpd(i));
+						}else{ //stop vibing
+							pulseActive[i] = false;
+						}
 					}
 				}
 			} //for loop
@@ -159,11 +175,7 @@ int main(){
 		} //tickCounter
 	} //while loop
 
-	cout << "--------------------------" << endl;
-	cout << "|     END OF PROGRAM     |" << endl;
-	cout << "--------------------------" << endl << endl;
-	profilesData.close();
-	profilesList.empty();
+	endProgram(profilesData, profilesList);
 	return EXIT_SUCCESS;
 }
 
@@ -180,7 +192,7 @@ void printProfile(GamepadVib gpad, int numBtns, int cWidth){
 		cout << setw(cWidth) << gpad.getPulseOffFreq(i);
 		cout << setw(cWidth) << gpad.getLeftSpd(i);
 		cout << setw(cWidth) << gpad.getRightSpd(i);
-		cout << endl;
+		cout << '\n';
 	}
 }
 
@@ -216,6 +228,15 @@ void writeProfile(fstream &file, GamepadVib gpad, int numBtns, int cWidth){
 		file << setw(cWidth) << gpad.getPulseOffFreq(i);
 		file << setw(cWidth) << gpad.getLeftSpd(i);
 		file << setw(cWidth) << gpad.getRightSpd(i);
-		file << endl;
+		file << '\n';
 	}
+}
+
+void endProgram(fstream &file, vector <string> &vectList){
+	cout << "--------------------------" << '\n';
+	cout << "|     END OF PROGRAM     |" << '\n';
+	cout << "--------------------------" << '\n';
+	file.close();
+	vectList.empty();
+	system("pause");
 }
