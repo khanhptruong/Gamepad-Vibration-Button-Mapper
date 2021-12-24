@@ -6,62 +6,44 @@ GamepadVib::GamepadVib(int gpadIndex) : Gamepad(gpadIndex){
 
 void GamepadVib::update(){
 	Gamepad::update();
-	_getButtonsPosEdge();
-	_getButtonsPressed();
+	_setButtonsPosEdge();
+	_setButtonsPressed();
 }
 
-bool GamepadVib::isExit(){ return _isMatching(_exitButtonMap, _buttonsPressed, _numTotalButtons) == true; }
+bool GamepadVib::isExit(){ return _isMatching(_exitButtonMap, buttonsPressed, numTotalButtons) == true; }
 
-std::string GamepadVib::getProfileName()     { return _profileName; }
-bool  GamepadVib::getBtnPressed(int index)   { return _buttonsPressed[index]; }
-bool  GamepadVib::getBtnPosEdge(int index)   { return _buttonsPosEdge[index]; }
-bool  GamepadVib::getBtnMap(int index)       { return _btnMap[index]; }
-int   GamepadVib::getNumPulses(int index)    { return _numPulses[index]; }
-float GamepadVib::getPulseFreq(int index)    { return _pulseFreq[index]; }
-float GamepadVib::getPulseOffFreq(int index) { return _pulseOffFreq[index]; }
-float GamepadVib::getLeftSpd(int index)      { return _leftSpeed[index]; }
-float GamepadVib::getRightSpd(int index)     { return _rightSpeed[index]; }
-
-void GamepadVib::setProfileName(std::string name){ _profileName = name; }
-void GamepadVib::setBtnMap(bool btn, int index)             { _btnMap[index] = btn; }
-void GamepadVib::setNumPulses(int num, int index)           { _numPulses[index] = num; }
-void GamepadVib::setPulseFreq(float freq, int index)        { _pulseFreq[index] = freq; }
-void GamepadVib::setPulseOffFreq(float offFreq, int index)  { _pulseOffFreq[index] = offFreq; }
-void GamepadVib::setLeftSpd(float spd, int index)           { _leftSpeed[index] = spd; }
-void GamepadVib::setRightSpd(float spd, int index)          { _rightSpeed[index] = spd; }
-
-void GamepadVib::_getButtonsPressed(){
-	for (int i = 0; i < _numDigitalButtons; i++){
-		_buttonsPressed[i] = Gamepad::isPressed(xinputButtons[i]);
+void GamepadVib::_setButtonsPressed(){
+	for (int i = 0; i < numDigitalButtons; i++){
+		buttonsPressed[i] = Gamepad::isPressed(xinputButtons[i]);
 	}
 	if (Gamepad::getLeftTrigger() > 0){
-		_buttonsPressed[_numTotalButtons - 2] = true;
+		buttonsPressed[numTotalButtons - 2] = true;
 	}
 	else{
-		_buttonsPressed[_numTotalButtons - 2] = false;
+		buttonsPressed[numTotalButtons - 2] = false;
 	}
 	if (Gamepad::getRightTrigger() > 0){
-		_buttonsPressed[_numTotalButtons - 1] = true;
+		buttonsPressed[numTotalButtons - 1] = true;
 	}
 	else{
-		_buttonsPressed[_numTotalButtons - 1] = false;
+		buttonsPressed[numTotalButtons - 1] = false;
 	}
 }
 
-void GamepadVib::_getButtonsPosEdge(){
-	for (int i = 0; i < _numDigitalButtons; i++){
-		_buttonsPosEdge[i] = Gamepad::isPosEdge(xinputButtons[i]);
+void GamepadVib::_setButtonsPosEdge(){
+	for (int i = 0; i < numDigitalButtons; i++){
+		buttonsPosEdge[i] = Gamepad::isPosEdge(xinputButtons[i]);
 	}
 	if (Gamepad::isLeftTriggerPosEdge() == true){
-		_buttonsPosEdge[_numTotalButtons - 2] = true;
+		buttonsPosEdge[numTotalButtons - 2] = true;
 	}else{
-		_buttonsPosEdge[_numTotalButtons - 2] = false;
+		buttonsPosEdge[numTotalButtons - 2] = false;
 	}
 	if (Gamepad::isRightTriggerPosEdge() == true){
-		_buttonsPosEdge[_numTotalButtons - 1] = true;
+		buttonsPosEdge[numTotalButtons - 1] = true;
 	}
 	else{
-		_buttonsPosEdge[_numTotalButtons - 1] = false;
+		buttonsPosEdge[numTotalButtons - 1] = false;
 	}
 }
 
@@ -79,111 +61,111 @@ bool GamepadVib::_isMatching(bool array1[], bool array2[], int arraySize){
 }
 
 void GamepadVib::_setDefault(){
-	_profileName = "Default";
+	profileName = "Default";
 
-	_btnMap[0] = false; //A
-	_btnMap[1] = false; //B
-	_btnMap[2] = false; //X
-	_btnMap[3] = false; //Y
-	_btnMap[4] = false; //DPAD UP
-	_btnMap[5] = false; //DPAD DOWN
-	_btnMap[6] = false; //DPAD LEFT
-	_btnMap[7] = false; //DPAD RIGHT
-	_btnMap[8] = false; //L SHOULDER
-	_btnMap[9] = false; //R SHOULDER
-	_btnMap[10] = false; //L THUMB
-	_btnMap[11] = false; //R THUMB
-	_btnMap[12] = false; //START
-	_btnMap[13] = false; //BACK
-	_btnMap[14] = false; //L TRIGGER
-	_btnMap[15] = false;  //R TRIGGER
+	btnMap[0] = false; //A
+	btnMap[1] = false; //B
+	btnMap[2] = false; //X
+	btnMap[3] = false; //Y
+	btnMap[4] = false; //DPAD UP
+	btnMap[5] = false; //DPAD DOWN
+	btnMap[6] = false; //DPAD LEFT
+	btnMap[7] = false; //DPAD RIGHT
+	btnMap[8] = false; //L SHOULDER
+	btnMap[9] = false; //R SHOULDER
+	btnMap[10] = false; //L THUMB
+	btnMap[11] = false; //R THUMB
+	btnMap[12] = false; //START
+	btnMap[13] = false; //BACK
+	btnMap[14] = false; //L TRIGGER
+	btnMap[15] = false;  //R TRIGGER
 
 	//if 1000 or more, just do it forever lol
-	_numPulses[0] = 0; //A
-	_numPulses[1] = 0; //B
-	_numPulses[2] = 0; //X
-	_numPulses[3] = 0; //Y
-	_numPulses[4] = 0; //DPAD UP
-	_numPulses[5] = 0; //DPAD DOWN
-	_numPulses[6] = 0; //DPAD LEFT
-	_numPulses[7] = 0; //DPAD RIGHT
-	_numPulses[8] = 0; //L SHOULDER
-	_numPulses[9] = 0; //R SHOULDER
-	_numPulses[10] = 0; //L THUMB
-	_numPulses[11] = 0; //R THUMB
-	_numPulses[12] = 0; //START
-	_numPulses[13] = 0; //BACK
-	_numPulses[14] = 0; //L TRIGGER
-	_numPulses[15] = 0;  //R TRIGGER
+	numPulses[0] = 0; //A
+	numPulses[1] = 0; //B
+	numPulses[2] = 0; //X
+	numPulses[3] = 0; //Y
+	numPulses[4] = 0; //DPAD UP
+	numPulses[5] = 0; //DPAD DOWN
+	numPulses[6] = 0; //DPAD LEFT
+	numPulses[7] = 0; //DPAD RIGHT
+	numPulses[8] = 0; //L SHOULDER
+	numPulses[9] = 0; //R SHOULDER
+	numPulses[10] = 0; //L THUMB
+	numPulses[11] = 0; //R THUMB
+	numPulses[12] = 0; //START
+	numPulses[13] = 0; //BACK
+	numPulses[14] = 0; //L TRIGGER
+	numPulses[15] = 0;  //R TRIGGER
 
 	//0 = continuous
-	_pulseFreq[0] = 0.0f; //A
-	_pulseFreq[1] = 0.0f; //B
-	_pulseFreq[2] = 0.0f; //X
-	_pulseFreq[3] = 0.0f; //Y
-	_pulseFreq[4] = 0.0f; //DPAD UP
-	_pulseFreq[5] = 0.0f; //DPAD DOWN
-	_pulseFreq[6] = 0.0f; //DPAD LEFT
-	_pulseFreq[7] = 0.0f; //DPAD RIGHT
-	_pulseFreq[8] = 0.0f; //L SHOULDER
-	_pulseFreq[9] = 0.0f; //R SHOULDER
-	_pulseFreq[10] = 0.0f; //L THUMB
-	_pulseFreq[11] = 0.0f; //R THUMB
-	_pulseFreq[12] = 0.0f; //START
-	_pulseFreq[13] = 0.0f; //BACK
-	_pulseFreq[14] = 0.0f; //L TRIGGER
-	_pulseFreq[15] = 0.0f;  //R TRIGGER
+	pulseFreq[0] = 0.0f; //A
+	pulseFreq[1] = 0.0f; //B
+	pulseFreq[2] = 0.0f; //X
+	pulseFreq[3] = 0.0f; //Y
+	pulseFreq[4] = 0.0f; //DPAD UP
+	pulseFreq[5] = 0.0f; //DPAD DOWN
+	pulseFreq[6] = 0.0f; //DPAD LEFT
+	pulseFreq[7] = 0.0f; //DPAD RIGHT
+	pulseFreq[8] = 0.0f; //L SHOULDER
+	pulseFreq[9] = 0.0f; //R SHOULDER
+	pulseFreq[10] = 0.0f; //L THUMB
+	pulseFreq[11] = 0.0f; //R THUMB
+	pulseFreq[12] = 0.0f; //START
+	pulseFreq[13] = 0.0f; //BACK
+	pulseFreq[14] = 0.0f; //L TRIGGER
+	pulseFreq[15] = 0.0f;  //R TRIGGER
 
-	_pulseOffFreq[0] = 0.0f; //A
-	_pulseOffFreq[1] = 0.0f; //B
-	_pulseOffFreq[2] = 0.0f; //X
-	_pulseOffFreq[3] = 0.0f; //Y
-	_pulseOffFreq[4] = 0.0f; //DPAD UP
-	_pulseOffFreq[5] = 0.0f; //DPAD DOWN
-	_pulseOffFreq[6] = 0.0f; //DPAD LEFT
-	_pulseOffFreq[7] = 0.0f; //DPAD RIGHT
-	_pulseOffFreq[8] = 0.0f; //L SHOULDER
-	_pulseOffFreq[9] = 0.0f; //R SHOULDER
-	_pulseOffFreq[10] = 0.0f; //L THUMB
-	_pulseOffFreq[11] = 0.0f; //R THUMB
-	_pulseOffFreq[12] = 0.0f; //START
-	_pulseOffFreq[13] = 0.0f; //BACK
-	_pulseOffFreq[14] = 0.0f; //L TRIGGER
-	_pulseOffFreq[15] = 0.0f;  //R TRIGGER
+	pulseOffFreq[0] = 0.0f; //A
+	pulseOffFreq[1] = 0.0f; //B
+	pulseOffFreq[2] = 0.0f; //X
+	pulseOffFreq[3] = 0.0f; //Y
+	pulseOffFreq[4] = 0.0f; //DPAD UP
+	pulseOffFreq[5] = 0.0f; //DPAD DOWN
+	pulseOffFreq[6] = 0.0f; //DPAD LEFT
+	pulseOffFreq[7] = 0.0f; //DPAD RIGHT
+	pulseOffFreq[8] = 0.0f; //L SHOULDER
+	pulseOffFreq[9] = 0.0f; //R SHOULDER
+	pulseOffFreq[10] = 0.0f; //L THUMB
+	pulseOffFreq[11] = 0.0f; //R THUMB
+	pulseOffFreq[12] = 0.0f; //START
+	pulseOffFreq[13] = 0.0f; //BACK
+	pulseOffFreq[14] = 0.0f; //L TRIGGER
+	pulseOffFreq[15] = 0.0f;  //R TRIGGER
 
-	_leftSpeed[0] = 0.0f; //A
-	_leftSpeed[1] = 0.0f; //B
-	_leftSpeed[2] = 0.0f; //X
-	_leftSpeed[3] = 0.0f; //Y
-	_leftSpeed[4] = 0.0f; //DPAD UP
-	_leftSpeed[5] = 0.0f; //DPAD DOWN
-	_leftSpeed[6] = 0.0f; //DPAD LEFT
-	_leftSpeed[7] = 0.0f; //DPAD RIGHT
-	_leftSpeed[8] = 0.0f; //L SHOULDER
-	_leftSpeed[9] = 0.0f; //R SHOULDER
-	_leftSpeed[10] = 0.0f; //L THUMB
-	_leftSpeed[11] = 0.0f; //R THUMB
-	_leftSpeed[12] = 0.0f; //START
-	_leftSpeed[13] = 0.0f; //BACK
-	_leftSpeed[14] = 0.0f; //L TRIGGER
-	_leftSpeed[15] = 0.0f;  //R TRIGGER
+	leftSpeed[0] = 0.0f; //A
+	leftSpeed[1] = 0.0f; //B
+	leftSpeed[2] = 0.0f; //X
+	leftSpeed[3] = 0.0f; //Y
+	leftSpeed[4] = 0.0f; //DPAD UP
+	leftSpeed[5] = 0.0f; //DPAD DOWN
+	leftSpeed[6] = 0.0f; //DPAD LEFT
+	leftSpeed[7] = 0.0f; //DPAD RIGHT
+	leftSpeed[8] = 0.0f; //L SHOULDER
+	leftSpeed[9] = 0.0f; //R SHOULDER
+	leftSpeed[10] = 0.0f; //L THUMB
+	leftSpeed[11] = 0.0f; //R THUMB
+	leftSpeed[12] = 0.0f; //START
+	leftSpeed[13] = 0.0f; //BACK
+	leftSpeed[14] = 0.0f; //L TRIGGER
+	leftSpeed[15] = 0.0f;  //R TRIGGER
 
-	_rightSpeed[0] = 0.0f; //A
-	_rightSpeed[1] = 0.0f; //B
-	_rightSpeed[2] = 0.0f; //X
-	_rightSpeed[3] = 0.0f; //Y
-	_rightSpeed[4] = 0.0f; //DPAD UP
-	_rightSpeed[5] = 0.0f; //DPAD DOWN
-	_rightSpeed[6] = 0.0f; //DPAD LEFT
-	_rightSpeed[7] = 0.0f; //DPAD RIGHT
-	_rightSpeed[8] = 0.0f; //L SHOULDER
-	_rightSpeed[9] = 0.0f; //R SHOULDER
-	_rightSpeed[10] = 0.0f; //L THUMB
-	_rightSpeed[11] = 0.0f; //R THUMB
-	_rightSpeed[12] = 0.0f; //START
-	_rightSpeed[13] = 0.0f; //BACK
-	_rightSpeed[14] = 0.0f; //L TRIGGER
-	_rightSpeed[15] = 0.0f;  //R TRIGGER
+	rightSpeed[0] = 0.0f; //A
+	rightSpeed[1] = 0.0f; //B
+	rightSpeed[2] = 0.0f; //X
+	rightSpeed[3] = 0.0f; //Y
+	rightSpeed[4] = 0.0f; //DPAD UP
+	rightSpeed[5] = 0.0f; //DPAD DOWN
+	rightSpeed[6] = 0.0f; //DPAD LEFT
+	rightSpeed[7] = 0.0f; //DPAD RIGHT
+	rightSpeed[8] = 0.0f; //L SHOULDER
+	rightSpeed[9] = 0.0f; //R SHOULDER
+	rightSpeed[10] = 0.0f; //L THUMB
+	rightSpeed[11] = 0.0f; //R THUMB
+	rightSpeed[12] = 0.0f; //START
+	rightSpeed[13] = 0.0f; //BACK
+	rightSpeed[14] = 0.0f; //L TRIGGER
+	rightSpeed[15] = 0.0f;  //R TRIGGER
 
 	_exitButtonMap[0] = false; //A
 	_exitButtonMap[1] = false; //B

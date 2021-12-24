@@ -80,7 +80,7 @@ int main(){
 		temp = profilesData.peek();
 		if (temp == EOF){ break; }
 		readProfile(profilesData, gamepad, numButtons);
-		profilesList.push_back(gamepad.getProfileName());
+		profilesList.push_back(gamepad.profileName);
 	}
 	cout << "+++++++++++++++" << '\n';
 	cout << "Profiles List: " << '\n';
@@ -97,7 +97,7 @@ int main(){
 		temp = profilesData.peek();
 		if (temp == EOF){ break; }
 		readProfile(profilesData, gamepad, numButtons);
-		if (gamepad.getProfileName() == profilesList[selection]){ break; }
+		if (gamepad.profileName == profilesList[selection]){ break; }
 	}
 	cout << "profile loaded" << '\n';
 	printProfile(gamepad, numButtons, colWidth);
@@ -119,52 +119,52 @@ int main(){
 			rSpd = 0.0f;
 			
 			for (int i = 0; i < numButtons; i++){
-				if (gamepad.getBtnMap(i) == true && gamepad.getBtnPressed(i) == true){ //when button is held...
-					if (gamepad.getNumPulses(i) == 0){ //adjoin continuous vibrations
-						adjoinSpd(lSpd, gamepad.getLeftSpd(i));
-						adjoinSpd(rSpd, gamepad.getRightSpd(i));
+				if (gamepad.btnMap[i] == true && gamepad.buttonsPressed[i] == true){ //when button is held...
+					if (gamepad.numPulses[i] == 0){ //adjoin continuous vibrations
+						adjoinSpd(lSpd, gamepad.leftSpeed[i]);
+						adjoinSpd(rSpd, gamepad.rightSpeed[i]);
 						pulseActive[i] = true; 
-						pulseTimer[i].setFreq(gamepad.getPulseFreq(i));
-						pulseCount[i] = gamepad.getNumPulses(i);
-					}else if (gamepad.getBtnPosEdge(i) == true){ //initialize and adjoin new pulsing vibrations
-						adjoinSpd(lSpd, gamepad.getLeftSpd(i));
-						adjoinSpd(rSpd, gamepad.getRightSpd(i));
+						pulseTimer[i].setFreq(gamepad.pulseFreq[i]);
+						pulseCount[i] = gamepad.numPulses[i];
+					}else if (gamepad.buttonsPosEdge[i] == true){ //initialize and adjoin new pulsing vibrations
+						adjoinSpd(lSpd, gamepad.leftSpeed[i]);
+						adjoinSpd(rSpd, gamepad.rightSpeed[i]);
 						pulseActive[i] = true;
-						pulseTimer[i].setFreq(gamepad.getPulseFreq(i));
-						pulseOffTimer[i].setFreq(gamepad.getPulseOffFreq(i));
-						pulseCount[i] = gamepad.getNumPulses(i);
+						pulseTimer[i].setFreq(gamepad.pulseFreq[i]);
+						pulseOffTimer[i].setFreq(gamepad.pulseOffFreq[i]);
+						pulseCount[i] = gamepad.numPulses[i];
 					}else if (pulseActive[i] == true && pulseCount[i] > 0){ //on active pulse...
 						if (pulseTimer[i].isTick() == true){ //if tick, deactivate
 							pulseActive[i] = false;
 							pulseOffTimer[i].resetTick();
 							if (pulseCount[i] < 1000){ pulseCount[i]--; }
 						}else if (pulseTimer[i].isTick() == false){ //if not tick, maintain adjoin vibration
-							adjoinSpd(lSpd, gamepad.getLeftSpd(i));
-							adjoinSpd(rSpd, gamepad.getRightSpd(i));
+							adjoinSpd(lSpd, gamepad.leftSpeed[i]);
+							adjoinSpd(rSpd, gamepad.rightSpeed[i]);
 						}
 					}else if (pulseActive[i] == false && pulseCount[i] > 0) { //on deactive pulse...
 						if (pulseOffTimer[i].isTick() == true){ //if tick, activate pulse and adjoin vibration ELSE if not tick, adjoin nothing
-							adjoinSpd(lSpd, gamepad.getLeftSpd(i));
-							adjoinSpd(rSpd, gamepad.getRightSpd(i));
+							adjoinSpd(lSpd, gamepad.leftSpeed[i]);
+							adjoinSpd(rSpd, gamepad.rightSpeed[i]);
 							pulseActive[i] = true;
 							pulseTimer[i].resetTick();
 						} 
 					}
-				}else if (gamepad.getBtnMap(i) == true && gamepad.getBtnPressed(i) == false){ //when mapped button released...
-					if (pulseActive[i] == true && pulseCount[i] > 0){ //on active pulse...
+				}else if (gamepad.btnMap[i] == true && gamepad.buttonsPressed[i] == false){ //when mapped button released...
+					if (pulseActive[i] == true && pulseCount[i] > 0){ //on active pulse... (pulse mode when never be true and > 0 at the same time)
 						if (pulseTimer[i].isTick() == true){ //if tick, deactivate
 							pulseActive[i] = false;
 							pulseCount[i] = 0;
 						}else if (pulseTimer[i].isTick() == false){ //if not tick, maintain adjoin vibration
-							adjoinSpd(lSpd, gamepad.getLeftSpd(i));
-							adjoinSpd(rSpd, gamepad.getRightSpd(i));
+							adjoinSpd(lSpd, gamepad.leftSpeed[i]);
+							adjoinSpd(rSpd, gamepad.rightSpeed[i]);
 						}
 					}else if (pulseActive[i] == false && pulseCount[i] > 0) { //on deactive pulse...
 						pulseCount[i] = 0;
-					}else if (pulseActive[i] == true && pulseCount[i] == 0){ //set min pulse for continuous vib
+					}else if (pulseActive[i] == true && pulseCount[i] == 0){ //set min pulse for continuous vib (only continuous can be true and == 0)
 						if (pulseTimer[i].isTick() == false){ //keep vibing until time is up
-							adjoinSpd(lSpd, gamepad.getLeftSpd(i));
-							adjoinSpd(rSpd, gamepad.getRightSpd(i));
+							adjoinSpd(lSpd, gamepad.leftSpeed[i]);
+							adjoinSpd(rSpd, gamepad.rightSpeed[i]);
 						}else{ //stop vibing
 							pulseActive[i] = false;
 						}
@@ -184,14 +184,14 @@ void adjoinSpd(float &spd, float spdToAdjoin){
 }
 
 void printProfile(GamepadVib gpad, int numBtns, int cWidth){
-	cout << gpad.getProfileName() << endl;
+	cout << gpad.profileName << endl;
 	for (int i = 0; i < numBtns; i++){
-		cout << setw(cWidth) << gpad.getBtnMap(i);
-		cout << setw(cWidth) << gpad.getNumPulses(i);
-		cout << setw(cWidth) << gpad.getPulseFreq(i);
-		cout << setw(cWidth) << gpad.getPulseOffFreq(i);
-		cout << setw(cWidth) << gpad.getLeftSpd(i);
-		cout << setw(cWidth) << gpad.getRightSpd(i);
+		cout << setw(cWidth) << gpad.btnMap[i];
+		cout << setw(cWidth) << gpad.numPulses[i];
+		cout << setw(cWidth) << gpad.pulseFreq[i];
+		cout << setw(cWidth) << gpad.pulseOffFreq[i];
+		cout << setw(cWidth) << gpad.leftSpeed[i];
+		cout << setw(cWidth) << gpad.rightSpeed[i];
 		cout << '\n';
 	}
 }
@@ -200,7 +200,7 @@ void readProfile(fstream &file, GamepadVib &gpad, int numBtns){
 	Buffer buff;
 	getline(file, buff.pName);
 	if (buff.pName == ""){ return; }
-	gpad.setProfileName(buff.pName);
+	gpad.profileName = buff.pName;
 	for (int i = 0; i < numBtns; i++){
 		file >> buff.mapBuff;
 		file >> buff.numPulsesBuff;
@@ -209,25 +209,25 @@ void readProfile(fstream &file, GamepadVib &gpad, int numBtns){
 		file >> buff.lSpdBuff;
 		file >> buff.rSpdBuff;
 
-		gpad.setBtnMap(buff.mapBuff, i);
-		gpad.setNumPulses(buff.numPulsesBuff, i);
-		gpad.setPulseFreq(buff.pulseFreqBuff, i);
-		gpad.setPulseOffFreq(buff.pulseOffBuff, i);
-		gpad.setLeftSpd(buff.lSpdBuff, i);
-		gpad.setRightSpd(buff.rSpdBuff, i);
+		gpad.btnMap[i] = buff.mapBuff;
+		gpad.numPulses[i] = buff.numPulsesBuff;
+		gpad.pulseFreq[i] = buff.pulseFreqBuff;
+		gpad.pulseOffFreq[i] = buff.pulseOffBuff;
+		gpad.leftSpeed[i] = buff.lSpdBuff;
+		gpad.rightSpeed[i] = buff.rSpdBuff;
 	}
 	file.ignore(1, '\n');
 }
 
 void writeProfile(fstream &file, GamepadVib gpad, int numBtns, int cWidth){
-	file << gpad.getProfileName() << endl;
+	file << gpad.profileName << endl;
 	for (int i = 0; i < numBtns; i++){
-		file << setw(cWidth) << gpad.getBtnMap(i);
-		file << setw(cWidth) << gpad.getNumPulses(i);
-		file << setw(cWidth) << gpad.getPulseFreq(i);
-		file << setw(cWidth) << gpad.getPulseOffFreq(i);
-		file << setw(cWidth) << gpad.getLeftSpd(i);
-		file << setw(cWidth) << gpad.getRightSpd(i);
+		file << setw(cWidth) << gpad.btnMap[i];
+			file << setw(cWidth) << gpad.numPulses[i];
+		file << setw(cWidth) << gpad.pulseFreq[i];
+		file << setw(cWidth) << gpad.pulseOffFreq[i];
+		file << setw(cWidth) << gpad.leftSpeed[i];
+		file << setw(cWidth) << gpad.rightSpeed[i];
 		file << '\n';
 	}
 }

@@ -9,45 +9,27 @@ class GamepadVib : public Gamepad
 {
 public:
 	GamepadVib(int gpadIndex);
+	static const int numDigitalButtons = 14; //number of digital buttons
+	static const int numTotalButtons = 16; //digital buttons and two triggers
 	
 	void update();
 	bool isExit();
 
-	std::string getProfileName();
-	bool  getBtnPressed(int index);
-	bool  getBtnPosEdge(int index);
-	bool  getBtnMap(int index);
-	int   getNumPulses(int index);
-	float getPulseFreq(int index);
-	float getPulseOffFreq(int index);
-	float getLeftSpd(int index);
-	float getRightSpd(int index);
-
-	void setProfileName(std::string name);
-	void setBtnMap(bool btn, int index);
-	void setNumPulses(int num, int index);
-	void setPulseFreq(float freq, int index);
-	void setPulseOffFreq(float offFreq, int index);
-	void setLeftSpd(float spd, int index);
-	void setRightSpd(float spd, int index);
+	std::string profileName;
+	bool  buttonsPressed[numTotalButtons];
+	bool  buttonsPosEdge[numTotalButtons];
+	bool  btnMap[numTotalButtons];
+	short int numPulses[numTotalButtons];
+	float pulseFreq[numTotalButtons]; 
+	float pulseOffFreq[numTotalButtons];
+	float leftSpeed[numTotalButtons];
+	float rightSpeed[numTotalButtons];
 
 private:
-	static const int _numDigitalButtons = 14; //number of digital buttons
-	static const int _numTotalButtons = 16; //digital buttons and two triggers
+	bool _exitButtonMap[numTotalButtons];
 
-	std::string _profileName;
-	bool  _buttonsPressed[_numTotalButtons];
-	bool  _buttonsPosEdge[_numTotalButtons];
-	bool  _btnMap[_numTotalButtons];
-	int   _numPulses[_numTotalButtons]; 
-	float _pulseFreq[_numTotalButtons]; //0 means pulse continuously
-	float _pulseOffFreq[_numTotalButtons];
-	float _leftSpeed[_numTotalButtons];
-	float _rightSpeed[_numTotalButtons];
-	bool  _exitButtonMap[_numTotalButtons];
-
-	void _getButtonsPressed();
-	void _getButtonsPosEdge();
+	void _setButtonsPressed();
+	void _setButtonsPosEdge();
 	bool _isMatching(bool array1[], bool array2[], int arraySize);
 	void _setDefault();
 };
