@@ -1,0 +1,17 @@
+﻿H:\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(496,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  Gamepad.cpp
+  GamepadVib.cpp
+  main.cpp
+H:\Code Projects\GamepadVibDLL\main.cpp(37,66): warning C4190: 'getProfileName' has C-linkage specified, but returns UDT 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' which is incompatible with C
+H:\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\include\xstring(4920): message : see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+  TickCounter.cpp
+H:\Code Projects\GamepadVibDLL\TickCounter.cpp(15,20): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+H:\Code Projects\GamepadVibDLL\TickCounter.cpp(21,19): warning C4244: 'initializing': conversion from '_Rep' to 'int', possible loss of data
+          with
+          [
+              _Rep=__int64
+          ]
+H:\Code Projects\GamepadVibDLL\TickCounter.cpp(42,20): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+  Generating Code...
+     Creating library ..\GamepadVibCSharpTest\bin\Debug\net6.0\GamepadVibDLL.lib and object ..\GamepadVibCSharpTest\bin\Debug\net6.0\GamepadVibDLL.exp
+  GamepadVibDLL.vcxproj -> H:\Code Projects\GamepadVibCSharpTest\bin\Debug\net6.0\GamepadVibDLL.dll
