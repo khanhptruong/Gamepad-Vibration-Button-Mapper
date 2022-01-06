@@ -9,8 +9,8 @@ class GamepadVib : public Gamepad
 {
 public:
 	GamepadVib(int gpadIndex);
-	static const int numDigitalButtons = 14; //number of digital buttons
-	static const int numTotalButtons = 16; //digital buttons and two triggers
+	static const short int numDigitalButtons = 14; //number of digital buttons
+	static const short int numTotalButtons = 16; //digital buttons and two triggers
 	
 	void update();
 	bool isExit();
@@ -18,7 +18,7 @@ public:
 	std::string profileName;
 	bool  buttonsPressed[numTotalButtons];
 	bool  buttonsPosEdge[numTotalButtons];
-	bool  btnMap[numTotalButtons];
+	bool  buttonMap[numTotalButtons];
 	short int numPulses[numTotalButtons];
 	float pulseFreq[numTotalButtons]; 
 	float pulseOffFreq[numTotalButtons];

@@ -63,24 +63,25 @@ bool GamepadVib::_isMatching(bool array1[], bool array2[], int arraySize){
 void GamepadVib::_setDefault(){
 	profileName = "Default";
 
-	btnMap[0] = false; //A
-	btnMap[1] = false; //B
-	btnMap[2] = false; //X
-	btnMap[3] = false; //Y
-	btnMap[4] = false; //DPAD UP
-	btnMap[5] = false; //DPAD DOWN
-	btnMap[6] = false; //DPAD LEFT
-	btnMap[7] = false; //DPAD RIGHT
-	btnMap[8] = false; //L SHOULDER
-	btnMap[9] = false; //R SHOULDER
-	btnMap[10] = false; //L THUMB
-	btnMap[11] = false; //R THUMB
-	btnMap[12] = false; //START
-	btnMap[13] = false; //BACK
-	btnMap[14] = false; //L TRIGGER
-	btnMap[15] = false;  //R TRIGGER
+	buttonMap[0] = false; //A
+	buttonMap[1] = false; //B
+	buttonMap[2] = false; //X
+	buttonMap[3] = false; //Y
+	buttonMap[4] = false; //DPAD UP
+	buttonMap[5] = false; //DPAD DOWN
+	buttonMap[6] = false; //DPAD LEFT
+	buttonMap[7] = false; //DPAD RIGHT
+	buttonMap[8] = false; //L SHOULDER
+	buttonMap[9] = false; //R SHOULDER
+	buttonMap[10] = false; //L THUMB
+	buttonMap[11] = false; //R THUMB
+	buttonMap[12] = false; //START
+	buttonMap[13] = false; //BACK
+	buttonMap[14] = false; //L TRIGGER
+	buttonMap[15] = false;  //R TRIGGER
 
 	//if 1000 or more, just do it forever lol
+	//if 0, continuous vib with no pulse
 	numPulses[0] = 0; //A
 	numPulses[1] = 0; //B
 	numPulses[2] = 0; //X
@@ -98,7 +99,6 @@ void GamepadVib::_setDefault(){
 	numPulses[14] = 0; //L TRIGGER
 	numPulses[15] = 0;  //R TRIGGER
 
-	//0 = continuous
 	pulseFreq[0] = 0.0f; //A
 	pulseFreq[1] = 0.0f; //B
 	pulseFreq[2] = 0.0f; //X
