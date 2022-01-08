@@ -5,12 +5,15 @@
 #include <iomanip> //for setw
 #include <vector>
 #include <comdef.h> //allocate sttring
+#include <filesystem> //list files in a dir
 using namespace std;
 
+#pragma region Declare Global Variables
 const float updateFreq = 30.0f; //Hz
 const short int gamepadIndex = 0; //which controller
 const short int colWidth = 8;
-const string fileName = "profiles.txt";
+const string fileExten = ".txt";
+const string profilesDir = ".\\profiles";
 vector <string> profilesList;
 
 GamepadVib gamepad(gamepadIndex);
@@ -22,17 +25,9 @@ TickCounter pulseTimer[numButtons];
 TickCounter pulseOffTimer[numButtons];
 float lSpd, rSpd;
 bool exitLoop = false;
+#pragma endregion
 
-struct Buffer{
-	string pName;
-	bool mapBuff;
-	int  numPulsesBuff;
-	float pulseFreqBuff;
-	float pulseOffBuff;
-	float lSpdBuff;
-	float rSpdBuff;
-};
-
+#pragma region dllexport P/Invoke Function Declarations
 extern "C" __declspec(dllexport) void readAllProfiles();
 extern "C" __declspec(dllexport) int getNumProfiles();
 extern "C" __declspec(dllexport) BSTR getProfileName(int index);
@@ -41,6 +36,7 @@ extern "C" __declspec(dllexport) void vibrationLoop();
 extern "C" __declspec(dllexport) void endVibLoop();
 extern "C" __declspec(dllexport) bool isGamepadConnected();
 extern "C" __declspec(dllexport) float getData(int field, int index);
+extern "C" __declspec(dllexport) void setData(int field, int index, float data);
 
 void readAllProfiles();
 int getNumProfiles();
@@ -50,23 +46,28 @@ void vibrationLoop();
 void endVibLoop();
 bool isGamepadConnected();
 float getData(int field, int index);
+void setData(int field, int index, float data);
+#pragma endregion
 
+#pragma region Internal Function Declarations
 void adjoinSpd(float &spd, float spdToAdjoin);
 void printProfile(GamepadVib gpad, int numBtns, int cWidth);
 void readProfile(fstream &file, GamepadVib &gpad, int numBtns);
 void writeProfile(fstream &file, GamepadVib gpad, int numBtns, int cWidth);
+#pragma endregion
 
+#pragma region dllexport P/Invoke Function Definitions
 void readAllProfiles() {
-	int temp;
-	fstream profilesData(fileName, ios::in | ios::app);
-
-	while (!profilesData.eof() || !profilesData.fail()) {
-		temp = profilesData.peek();
-		if (temp == EOF) { break; }
-		readProfile(profilesData, gamepad, numButtons);
-		profilesList.push_back(gamepad.profileName);
+	if (profilesList.empty() == false){ profilesList.clear(); }
+	string s;
+	string::size_type p;
+	for (const auto& entry : std::filesystem::directory_iterator(profilesDir)) { //make sure using C++ 17 standard
+		s = entry.path().string();
+		s = s.substr(s.find_last_of("/\\") + 1); //get filename only, without full dir
+		p = s.find_last_of('.');
+		s = s.substr(0, p); //remove file extension
+		profilesList.push_back(s);
 	}
-	profilesData.close();
 }
 
 int getNumProfiles() {
@@ -81,16 +82,9 @@ BSTR getProfileName(int index) {
 }
 
 void setProfile(int index) {
-	int temp;
-	fstream profilesData(fileName, ios::in | ios::app);
-
-	profilesData.seekg(0L, ios::beg);
-	while (!profilesData.eof() || !profilesData.fail()) {
-		temp = profilesData.peek();
-		if (temp == EOF) { break; }
-		readProfile(profilesData, gamepad, numButtons);
-		if (gamepad.profileName == profilesList[index]) { break; }
-	}
+	string fileName = profilesDir + "\\" + profilesList[index] + fileExten;
+	fstream profilesData(fileName, ios::in);
+	readProfile(profilesData, gamepad, numButtons);
 	profilesData.close();
 }
 
@@ -211,12 +205,33 @@ float getData(int field, int index) {
 	}
 }
 
-//***************
-//
-//internal functions
-// 
-//***************
+void setData(int field, int index, float data) {
+	switch (field) {
+		case 0:
+			gamepad.buttonMap[index] = (bool)data;
+			break;
+		case 1:
+			gamepad.numPulses[index] = (int)data;
+			break;
+		case 2:
+			gamepad.pulseFreq[index] = data;
+			break;
+		case 3:
+			gamepad.pulseOffFreq[index] = data;
+			break;
+		case 4:
+			gamepad.leftSpeed[index] = data;
+			break;
+		case 5:
+			gamepad.rightSpeed[index] = data;
+			break;
+		default:
+			break;
+	}
+}
+#pragma endregion
 
+#pragma region Internal Function Definitions
 void adjoinSpd(float &spd, float spdToAdjoin){
 	if (spd < spdToAdjoin){ spd = spdToAdjoin; }
 }
@@ -235,33 +250,22 @@ void printProfile(GamepadVib gpad, int numBtns, int cWidth){
 }
 
 void readProfile(fstream &file, GamepadVib &gpad, int numBtns){
-	Buffer buff;
-	getline(file, buff.pName);
-	if (buff.pName == ""){ return; }
-	gpad.profileName = buff.pName;
+	getline(file, gpad.profileName);
 	for (int i = 0; i < numBtns; i++){
-		file >> buff.mapBuff;
-		file >> buff.numPulsesBuff;
-		file >> buff.pulseFreqBuff;
-		file >> buff.pulseOffBuff;
-		file >> buff.lSpdBuff;
-		file >> buff.rSpdBuff;
-
-		gpad.buttonMap[i] = buff.mapBuff;
-		gpad.numPulses[i] = buff.numPulsesBuff;
-		gpad.pulseFreq[i] = buff.pulseFreqBuff;
-		gpad.pulseOffFreq[i] = buff.pulseOffBuff;
-		gpad.leftSpeed[i] = buff.lSpdBuff;
-		gpad.rightSpeed[i] = buff.rSpdBuff;
+		file >> gpad.buttonMap[i];
+		file >> gpad.numPulses[i];
+		file >> gpad.pulseFreq[i];
+		file >> gpad.pulseOffFreq[i];
+		file >> gpad.leftSpeed[i];
+		file >> gpad.rightSpeed[i];
 	}
-	file.ignore(1, '\n');
 }
 
 void writeProfile(fstream &file, GamepadVib gpad, int numBtns, int cWidth){
 	file << gpad.profileName << endl;
 	for (int i = 0; i < numBtns; i++){
 		file << setw(cWidth) << gpad.buttonMap[i];
-			file << setw(cWidth) << gpad.numPulses[i];
+		file << setw(cWidth) << gpad.numPulses[i];
 		file << setw(cWidth) << gpad.pulseFreq[i];
 		file << setw(cWidth) << gpad.pulseOffFreq[i];
 		file << setw(cWidth) << gpad.leftSpeed[i];
@@ -269,3 +273,4 @@ void writeProfile(fstream &file, GamepadVib gpad, int numBtns, int cWidth){
 		file << '\n';
 	}
 }
+#pragma endregion
