@@ -34,6 +34,9 @@ namespace GamepadVibMapper
         [DllImport("GamepadVibMapperDLL")] public static extern bool isGamepadConnected();
         [DllImport("GamepadVibMapperDLL")] public static extern float getData(int field, int index);
         [DllImport("GamepadVibMapperDLL")] public static extern void setData(int field, int index, float data);
+        [DllImport("GamepadVibMapperDLL")] public static extern void writeProfile(int index);
+        [DllImport("GamepadVibMapperDLL")] public static extern void setProfileName(string pName);
+        [DllImport("GamepadVibMapperDLL")] [return: MarshalAs(UnmanagedType.BStr)] public static extern string getGpadProfileName();
         #endregion
 
         #region Declare_Global_Variables
@@ -41,6 +44,7 @@ namespace GamepadVibMapper
         int numProfiles;
         int buttonIndex;
         bool initialized = false;
+        bool windowLoaded = false;
         bool profileChanged = false;
         bool buttonChanged = false;
         bool settingsChanged = false;
@@ -96,7 +100,7 @@ namespace GamepadVibMapper
         {
             if (settingsChanged == true && keepCurrentProfile == false)
             {
-                if (MessageBox.Show("Profile has not been saved. Continue?", "Save Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                if (MessageBox.Show("Continue without saving?", "Save Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
                 {
                     keepCurrentProfile = true;
                     ProfilesListBox.SelectedIndex = prevProfileSelection;
@@ -181,7 +185,7 @@ namespace GamepadVibMapper
         {
             if (settingsChanged == true)
             {
-                if (MessageBox.Show("Profile has not been saved. Continue?", "Save Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                if (MessageBox.Show("Continue without saving?", "Save Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
                 {
                     e.Cancel = true;
                 }
@@ -198,10 +202,37 @@ namespace GamepadVibMapper
             }
         }
 
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            bool isConnected = isGamepadConnected();
+            if (isConnected == true)
+            {
+                ConnectionTextBlock.Text = "connected";
+                ConnectionTextBlock.Foreground = Brushes.LightGreen;
+            }
+            else
+            {
+                ConnectionTextBlock.Text = "disconnected";
+                ConnectionTextBlock.Foreground = Brushes.Red;
+            }
+            string nm = getGpadProfileName();
+            DebugTextBlock.Text = String.Format("Profile List: {0}\nProfile Name from gamepad: {1}\nbuttonIndex: {2}\nprevProfileSelection: {3}\nSettings:\n{4}", profiles[ProfilesListBox.SelectedIndex].Name, nm, buttonIndex, prevProfileSelection, PrintProfile());
+        }
+
         #region Button_Settings_Controls
         private void SettingStackPanel_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             settingsButtonsEnablement();
+        }
+
+        private void ProfileNameTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = Char.IsPunctuation(e.Text[0]);
+        }
+
+        private void ProfileNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (windowLoaded) settingsButtonsEnablement();
         }
 
         private void ButtonMapToggleButton_Click(object sender, RoutedEventArgs e)
@@ -247,21 +278,39 @@ namespace GamepadVibMapper
             RightSpeedTextBlock.Text = RightSpeedSlider.Value.ToString("0.00");
         }
 
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            setProfileName(ProfileNameTextBox.Text);
+            writeProfile(ProfilesListBox.SelectedIndex);
+            loadProfile();
+            if (profiles[ProfilesListBox.SelectedIndex].Name != getGpadProfileName())
+            {
+                profiles[ProfilesListBox.SelectedIndex].Name = getGpadProfileName();
+                ProfilesListBox.Items.Refresh();
+            }
+            CancelButton.IsEnabled = false;
+            SaveButton.IsEnabled = false;
+        }
+
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             loadProfile();
+            CancelButton.IsEnabled = false;
+            SaveButton.IsEnabled = false;
         }
         #endregion
 
         #region Internal_Functions
         private void loadButtonSettings()
         {
+            ProfileNameTextBox.Text = getGpadProfileName();
+
             if (getData(fieldButtonMap, buttonIndex) != 0.0f) { ButtonMapToggleButton.IsChecked = true; }
             else { ButtonMapToggleButton.IsChecked = false; }
 
             int x = (int)getData(fieldNumPulses, buttonIndex);
             NumPulsesSlider.Value = x;
-
+            
             PulseFreqSlider.Value = getData(fieldPulseFreq, buttonIndex);
             PulseOffFreqSlider.Value = getData(fieldPulseOffFreq, buttonIndex);
             LeftSpeedSlider.Value = getData(fieldLeftSpeed, buttonIndex);
@@ -326,22 +375,6 @@ namespace GamepadVibMapper
             else { RTRadioButton.Foreground = Brushes.Black; }
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            bool isConnected = isGamepadConnected();
-            if (isConnected == true)
-            {
-                ConnectionTextBlock.Text = "connected";
-                ConnectionTextBlock.Foreground = Brushes.LightGreen;
-            }
-            else
-            {
-                ConnectionTextBlock.Text = "disconnected";
-                ConnectionTextBlock.Foreground = Brushes.Red;
-            }
-            DebugTextBlock.Text = String.Format("Profile: {0}\nbuttonIndex: {1}\nprevProfileSelection: {2}\nSettings:\n{3}", profiles[ProfilesListBox.SelectedIndex].Name, buttonIndex, prevProfileSelection, PrintProfile());
-        }
-
         private string PrintProfile()
         {
             string s = "";
@@ -389,6 +422,11 @@ namespace GamepadVibMapper
             profileChanged = false;
         }
         #endregion
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            windowLoaded = true;
+        }
     }
 }
 

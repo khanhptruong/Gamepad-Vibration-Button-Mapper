@@ -6,6 +6,7 @@
 #include <vector>
 #include <comdef.h> //allocate sttring
 #include <filesystem> //list files in a dir
+#include <stdio.h> //rename files
 using namespace std;
 
 #pragma region Declare Global Variables
@@ -37,6 +38,9 @@ extern "C" __declspec(dllexport) void endVibLoop();
 extern "C" __declspec(dllexport) bool isGamepadConnected();
 extern "C" __declspec(dllexport) float getData(int field, int index);
 extern "C" __declspec(dllexport) void setData(int field, int index, float data);
+extern "C" __declspec(dllexport) void writeProfile(int index);
+extern "C" __declspec(dllexport) void setProfileName(const char* pName);
+extern "C" __declspec(dllexport) BSTR getGpadProfileName();
 
 void readAllProfiles();
 int getNumProfiles();
@@ -47,6 +51,9 @@ void endVibLoop();
 bool isGamepadConnected();
 float getData(int field, int index);
 void setData(int field, int index, float data);
+void writeProfile(int index);
+void setProfileName(const char* pName);
+BSTR getGpadProfileName();
 #pragma endregion
 
 #pragma region Internal Function Declarations
@@ -54,6 +61,7 @@ void adjoinSpd(float &spd, float spdToAdjoin);
 void printProfile(GamepadVib gpad, int numBtns, int cWidth);
 void readProfile(fstream &file, GamepadVib &gpad, int numBtns);
 void writeProfile(fstream &file, GamepadVib gpad, int numBtns, int cWidth);
+void renameProfile(int index, string newProfileName);
 #pragma endregion
 
 #pragma region dllexport P/Invoke Function Definitions
@@ -229,6 +237,30 @@ void setData(int field, int index, float data) {
 			break;
 	}
 }
+
+void writeProfile(int index) {
+	string fileName = profilesDir + "\\" + profilesList[index] + fileExten;
+	fstream profilesData(fileName, ios::out, ios::trunc);
+	writeProfile(profilesData, gamepad, numButtons, colWidth);
+	profilesData.close();
+
+	if (profilesList[index] != gamepad.profileName) {
+		renameProfile(index, gamepad.profileName);
+		profilesList[index] = gamepad.profileName;
+	}
+}
+
+void setProfileName(const char *pName) {
+	string s = pName;
+	gamepad.profileName = s;
+}
+
+BSTR getGpadProfileName() {
+	string str = gamepad.profileName;
+	std::wstring widestr = std::wstring(str.begin(), str.end());
+	const wchar_t* widecstr = widestr.c_str();
+	return SysAllocString(widecstr);
+}
 #pragma endregion
 
 #pragma region Internal Function Definitions
@@ -272,5 +304,13 @@ void writeProfile(fstream &file, GamepadVib gpad, int numBtns, int cWidth){
 		file << setw(cWidth) << gpad.rightSpeed[i];
 		file << '\n';
 	}
+}
+
+void renameProfile(int index, string newProfileName) {
+	string oldName = profilesDir + "\\" + profilesList[index] + fileExten;
+	string newName = profilesDir + "\\" + newProfileName + fileExten;
+	auto oName = oldName.c_str();
+	auto nName = newName.c_str();
+	rename(oName, nName);
 }
 #pragma endregion
