@@ -37,6 +37,8 @@ namespace GamepadVibMapper
         [DllImport("GamepadVibMapperDLL")] public static extern void writeProfile(int index);
         [DllImport("GamepadVibMapperDLL")] public static extern void setProfileName(string pName);
         [DllImport("GamepadVibMapperDLL")] [return: MarshalAs(UnmanagedType.BStr)] public static extern string getGpadProfileName();
+        [DllImport("GamepadVibMapperDLL")] public static extern void createNewProfile();
+        [DllImport("GamepadVibMapperDLL")] public static extern void deleteProfile(int index);
         #endregion
 
         #region Declare_Global_Variables
@@ -106,8 +108,7 @@ namespace GamepadVibMapper
                     ProfilesListBox.SelectedIndex = prevProfileSelection;
                 }
                 else
-                {
-                    //save
+                {                    
                     loadProfile();
                 }
             }
@@ -179,6 +180,11 @@ namespace GamepadVibMapper
             buttonChanged = true;
             if (initialized == true) { loadButtonSettings(); }
             buttonChanged = false;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            windowLoaded = true;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -297,6 +303,42 @@ namespace GamepadVibMapper
             loadProfile();
             CancelButton.IsEnabled = false;
             SaveButton.IsEnabled = false;
+        }
+
+        private void NewProfileButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (settingsChanged == true)
+            {
+                if (MessageBox.Show("Continue without saving?", "Save Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                {
+                    //do nothing
+                }
+                else
+                {
+                    makeNewProfile();
+                }
+            }
+            else
+            {
+                makeNewProfile();
+            }
+
+        }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Delete this profile?", "Delete Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+            {
+                //do nothing
+            }
+            else
+            {
+                int deleteIndex = ProfilesListBox.SelectedIndex;
+                deleteProfile(deleteIndex);
+                ProfilesListBox.SelectedIndex = 0;
+                profiles.RemoveAt(deleteIndex);
+                ProfilesListBox.Items.Refresh();
+            }
         }
         #endregion
 
@@ -421,12 +463,27 @@ namespace GamepadVibMapper
             }
             profileChanged = false;
         }
-        #endregion
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void makeNewProfile()
         {
-            windowLoaded = true;
+            createNewProfile();
+            profiles.Add(new ProfileName() { Name = getGpadProfileName() });
+            numProfiles = getNumProfiles();
+            ProfilesListBox.Items.Refresh();
+
+            profileChanged = true;
+            settingsChanged = false;
+            setProfile(profiles.Count() - 1);
+            if (initialized == true)
+            {
+                loadButtonSettings();
+                highlightActiveButtons();
+            }
+            prevProfileSelection = ProfilesListBox.SelectedIndex;
+            ProfilesListBox.SelectedIndex = profiles.Count() - 1;
+            profileChanged = false;
         }
+        #endregion        
     }
 }
 

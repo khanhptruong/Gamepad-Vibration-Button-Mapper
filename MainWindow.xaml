@@ -17,27 +17,33 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="5*" />
         </Grid.ColumnDefinitions>
-        <ScrollViewer Grid.Column="0"
-                      Background="LightGray"
-                      VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Hidden">
+        <DockPanel Grid.Column="0"                    
+                    Background="LightGray">
             <ListBox x:Name="ProfilesListBox"
                      SelectionChanged="ProfilesListBox_SelectionChanged"
                      SelectedIndex="0"
                      Background="{x:Null}"
-                     PreviewMouseLeftButtonDown="ProfilesListBox_PreviewMouseLeftButtonDown">
+                     PreviewMouseLeftButtonDown="ProfilesListBox_PreviewMouseLeftButtonDown"
+                     DockPanel.Dock="Top">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Name}" 
-                                       FontSize="22" 
-                                       FontFamily="Bahnschrift" 
-                                       TextTrimming="CharacterEllipsis"/>
+                            <TextBlock Text="{Binding Name}"
+                                       FontSize="22"
+                                       FontFamily="Bahnschrift"
+                                       TextTrimming="CharacterEllipsis" />
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-        </ScrollViewer>
+            <Button x:Name="NewProfileButton"
+                    Content="New Profile"
+                    VerticalAlignment="Bottom"
+                    Margin="10,10,10,10"
+                    DockPanel.Dock="Bottom"
+                    Click="NewProfileButton_Click" />
+        </DockPanel>
+        
         <GridSplitter Grid.Column="1"
                       Width="10"
                       Background="Gray"
@@ -52,9 +58,10 @@
             </Grid.ColumnDefinitions>
             <GroupBox Grid.Column="0"
                       Header="Buttons"
-                      Padding="10,10,10,10">
+                      Padding="10,10,10,10"
+                      FontSize="14">
                 <StackPanel x:Name="ButtonSelectStackPanel"
-                            ToggleButton.Checked="ButtonSelectStackPanel_Checked">
+                            ToggleButton.Checked="ButtonSelectStackPanel_Checked" >
                     <RadioButton x:Name="ARadioButton"
                                  Content="A"
                                  IsChecked="True" />
@@ -104,6 +111,7 @@
                                VerticalAlignment="Bottom"/>
                     <TextBox x:Name="ProfileNameTextBox" 
                              FontSize="20"
+                             MinWidth="200"
                              PreviewTextInput="ProfileNameTextBox_PreviewTextInput"
                              TextChanged="ProfileNameTextBox_TextChanged" />
                 </StackPanel>
@@ -235,6 +243,11 @@
                             MinWidth="100"
                             IsEnabled="False"
                             Click="CancelButton_Click" />
+                    <Button x:Name="DeleteButton"
+                            Content="Delete"
+                            Margin="10,10,10,10"
+                            MinWidth="100"
+                            Click="DeleteButton_Click" />
                 </StackPanel>
             </StackPanel>
             <StackPanel Grid.Column="2"

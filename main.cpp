@@ -41,6 +41,8 @@ extern "C" __declspec(dllexport) void setData(int field, int index, float data);
 extern "C" __declspec(dllexport) void writeProfile(int index);
 extern "C" __declspec(dllexport) void setProfileName(const char* pName);
 extern "C" __declspec(dllexport) BSTR getGpadProfileName();
+extern "C" __declspec(dllexport) void createNewProfile();
+extern "C" __declspec(dllexport) void deleteProfile(int index);
 
 void readAllProfiles();
 int getNumProfiles();
@@ -54,6 +56,8 @@ void setData(int field, int index, float data);
 void writeProfile(int index);
 void setProfileName(const char* pName);
 BSTR getGpadProfileName();
+void createNewProfile();
+void deleteProfile(int index);
 #pragma endregion
 
 #pragma region Internal Function Declarations
@@ -97,7 +101,7 @@ void setProfile(int index) {
 }
 
 void vibrationLoop(){
-	exitLoop == false;
+	exitLoop = false;
 	
 	//***************
 	//vibration loop
@@ -260,6 +264,51 @@ BSTR getGpadProfileName() {
 	std::wstring widestr = std::wstring(str.begin(), str.end());
 	const wchar_t* widecstr = widestr.c_str();
 	return SysAllocString(widecstr);
+}
+
+void createNewProfile() {
+	string newPName = "New Profile";
+	bool fileAlreadyExists = false;
+	int num = 1;
+	for (int i = 0; i < profilesList.size(); i++) {
+		if (newPName == profilesList[i]) {
+			fileAlreadyExists = true;
+			break;
+		}
+	}
+	while (fileAlreadyExists == true) {
+		newPName = "New Profile_" + to_string(num);
+		num++;
+		for (int i = 0; i < profilesList.size(); i++) {
+			if (newPName == profilesList[i]) {
+				fileAlreadyExists = true;
+				break;
+			} else {
+				fileAlreadyExists = false;
+			}
+		}
+	};
+	gamepad.profileName = newPName;
+	for (int i = 0; i < numButtons; i++) {
+		gamepad.buttonMap[i] = false;
+		gamepad.numPulses[i] = 0;
+		gamepad.pulseFreq[i] = 0.0f;
+		gamepad.pulseOffFreq[i] = 0.0f;
+		gamepad.leftSpeed[i] = 0.0f;
+		gamepad.rightSpeed[i] = 0.0f;
+	}
+	profilesList.push_back(newPName);
+	string fileName = profilesDir + "\\" + newPName + fileExten;
+	fstream profilesData(fileName, ios::out);
+	writeProfile(profilesData, gamepad, numButtons, colWidth);
+	profilesData.close();
+}
+
+void deleteProfile(int index) {
+	string toDelete = profilesDir + "\\" + profilesList[index] + fileExten;
+	auto fileToDel = toDelete.c_str();
+	remove(fileToDel);
+	profilesList.erase(profilesList.begin() + index);
 }
 #pragma endregion
 
